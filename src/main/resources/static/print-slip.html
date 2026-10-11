@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Official Semester Registration Slip — EASY REGISTRATION</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 12mm;
+        }
+        .barcode-box {
+            font-family: monospace;
+            letter-spacing: 4px;
+            font-size: 1.25rem;
+            font-weight: 700;
+            background: #f1f5f9;
+            padding: 0.35rem 1rem;
+            border-radius: var(--radius-sm);
+            display: inline-block;
+        }
+    </style>
+</head>
+<body style="background: #e2e8f0;">
+
+    <!-- Top Action Toolbar (Hidden during print) -->
+    <div class="no-print" style="background: white; border-bottom: 1px solid var(--border); padding: 0.85rem 1.5rem; position: sticky; top: 0; z-index: 100;">
+        <div style="max-width: 820px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <a href="/student-dashboard" class="btn btn-secondary btn-sm">← Back to Dashboard</a>
+                <span style="font-weight: 600; color: var(--primary);">Official Clearance Slip</span>
+            </div>
+            <div>
+                <button onclick="window.print()" class="btn btn-primary btn-sm">
+                    🖨️ Print / Save as PDF
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Printable Slip Document -->
+    <div class="print-container">
+        <!-- Provisional Warning if not approved -->
+        <div id="non-approved-warning" style="display: none; background: var(--warning-light); border: 1.5px solid var(--warning); padding: 0.75rem 1rem; border-radius: var(--radius-md); font-size: 0.82rem; color: #92400e; margin-bottom: 1.25rem;"></div>
+
+        <!-- Official Header -->
+        <div class="slip-header">
+            <div class="college-seal">🏛️</div>
+            <div class="college-details">
+                <div class="college-name">METROPOLITAN INSTITUTE OF TECHNOLOGY</div>
+                <div style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 2px;">
+                    Affiliated to State Technological University • Approved by AICTE • Accredited Grade 'A+'
+                </div>
+                <div>
+                    <span class="slip-tag">Official Semester Registration & Clearance Card</span>
+                </div>
+            </div>
+            <div style="text-align: right;">
+                <div class="barcode-box" id="slip-app-number">REG-2026-S4</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 3px;">
+                    Issued: <span id="slip-date">—</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Academic Session Info Bar -->
+        <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.6rem 1rem; margin-bottom: 1.25rem; display: flex; justify-content: space-between; font-size: 0.88rem;">
+            <div>Academic Session: <strong id="slip-academic-year">—</strong></div>
+            <div>Enrolled Level: <strong id="slip-semester">—</strong></div>
+            <div>Department: <strong id="slip-department">—</strong></div>
+        </div>
+
+        <!-- Student Particulars Grid -->
+        <div style="border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 1rem; margin-bottom: 1.25rem;">
+            <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--primary); margin-bottom: 0.6rem; border-bottom: 1px solid var(--border); padding-bottom: 0.3rem;">
+                Student Particulars
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; font-size: 0.88rem;">
+                <div>Full Name: <strong id="slip-student-name">—</strong></div>
+                <div>Register Number: <strong id="slip-reg-number">—</strong></div>
+                <div>Class Roll No: <strong id="slip-roll-number">—</strong></div>
+                <div>Cumulative CGPA: <strong id="slip-cgpa">—</strong></div>
+                <div>Active Backlogs: <strong id="slip-backlogs">0</strong></div>
+                <div>Contact Phone: <span id="slip-phone">—</span></div>
+                <div style="grid-column: 1 / -1;">Email Address: <span id="slip-email">—</span></div>
+            </div>
+        </div>
+
+        <!-- Fee & Transport Clearance Info -->
+        <div style="border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 1rem; margin-bottom: 1.25rem; font-size: 0.85rem;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div>
+                    <strong>Tuition Fee Receipt:</strong> <span id="slip-fee-rcpt">—</span><br>
+                    <strong>Amount Paid:</strong> <span id="slip-fee-amount">—</span> (Date: <span id="slip-fee-date">—</span>)
+                </div>
+                <div id="slip-transport-row">
+                    <strong>College Bus Transport:</strong> Loading...
+                </div>
+            </div>
+        </div>
+
+        <!-- Registered Subjects Table -->
+        <div style="margin-bottom: 1.25rem;">
+            <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--primary); margin-bottom: 0.4rem;">
+                Enrolled Course Curriculum
+            </div>
+            <table class="table" style="font-size: 0.82rem; border: 1px solid var(--border);">
+                <thead>
+                    <tr style="background: #f1f5f9;">
+                        <th style="width: 40px; text-align: center; padding: 0.4rem;">#</th>
+                        <th style="padding: 0.4rem;">Course Code & Title</th>
+                        <th style="width: 110px; text-align: center; padding: 0.4rem;">Course Type</th>
+                        <th style="width: 100px; text-align: center; padding: 0.4rem;">Enrollment</th>
+                    </tr>
+                </thead>
+                <tbody id="slip-courses-table-body">
+                    <tr><td colspan="4" style="text-align: center; padding: 1rem;">Loading registered courses...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Four Department Clearance Seals -->
+        <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--primary); margin-top: 1.5rem; margin-bottom: 0.3rem;">
+            Departmental Clearance Certifications
+        </div>
+        <div class="clearance-stamp-grid" id="clearance-stamps-container">
+            <!-- Injected by print.js -->
+        </div>
+
+        <!-- Official Signatures -->
+        <div class="signature-row">
+            <div class="sign-box">
+                <div class="sign-line"></div>
+                <div class="sign-label">Student Signature</div>
+            </div>
+            <div class="sign-box">
+                <div class="sign-line"></div>
+                <div class="sign-label">Faculty Advisor</div>
+            </div>
+            <div class="sign-box">
+                <div class="sign-line"></div>
+                <div class="sign-label">Head of Department (HOD)</div>
+            </div>
+        </div>
+
+        <!-- Document Security Verification Footer -->
+        <div style="margin-top: 2rem; padding-top: 0.75rem; border-top: 1px dashed var(--border); display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--text-muted);">
+            <div>Security Hash: <span id="slip-verification-code">REG4-984128-SEC</span></div>
+            <div>Generated via Easy Registration Portal System</div>
+            <div>Page 1 of 1</div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/api.js"></script>
+    <script src="/js/print.js"></script>
+</body>
+</html>

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Login — EASY REGISTRATION</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .login-wrapper {
+            min-height: calc(100vh - 80px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1.5rem;
+        }
+        .login-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-xl);
+            width: 100%;
+            max-width: 480px;
+            padding: 2.5rem;
+        }
+        .role-pill-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .role-pill {
+            flex: 1 1 calc(33.33% - 0.5rem);
+            padding: 0.55rem 0.25rem;
+            text-align: center;
+            font-size: 0.78rem;
+            font-weight: 600;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+            background: #f8fafc;
+            color: var(--text-secondary);
+        }
+        .role-pill.active {
+            border-color: var(--primary-light);
+            background: var(--primary-subtle);
+            color: var(--primary);
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-brand">
+                <div class="brand-icon">🎓</div>
+                <div>
+                    EASY REGISTRATION
+                    <span class="nav-tagline">Online Semester Registration System</span>
+                </div>
+            </a>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/register" class="btn btn-secondary btn-sm">Student Sign Up</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="login-wrapper">
+        <div class="login-card">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <div style="width: 50px; height: 50px; background: var(--primary-subtle); color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem; font-size: 1.5rem;">
+                    🔐
+                </div>
+                <h2 style="color: var(--primary-dark); font-size: 1.7rem;">Portal Login</h2>
+                <p style="color: var(--text-secondary); font-size: 0.88rem; margin-top: 0.35rem;">
+                    Select your role to access your personalized dashboard
+                </p>
+            </div>
+
+            <!-- Role Selector -->
+            <label class="form-label" style="margin-bottom: 0.6rem;">Select Access Role:</label>
+            <div class="role-pill-group">
+                <div class="role-pill active" onclick="selectRole('STUDENT', this)">🎒 Student</div>
+                <div class="role-pill" onclick="selectRole('ACCOUNTS', this)">💳 Accounts</div>
+                <div class="role-pill" onclick="selectRole('TRANSPORT', this)">🚌 Transport</div>
+                <div class="role-pill" onclick="selectRole('LAB_ASSISTANT', this)">🔬 Lab Asst</div>
+                <div class="role-pill" onclick="selectRole('HOD', this)">🏛️ HOD</div>
+            </div>
+
+            <!-- Auto-Fill Demo Credentials Helper -->
+            <div style="background: #f8fafc; border: 1px dashed var(--border); border-radius: var(--radius-md); padding: 0.75rem; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between;">
+                <span id="demo-account-hint" style="font-size: 0.8rem; color: var(--text-secondary);">
+                    Demo: <strong>2024CS101</strong> / <strong>password123</strong>
+                </span>
+                <button type="button" onclick="autofillDemoCredentials()" class="btn btn-outline btn-sm" style="font-size: 0.75rem; padding: 0.25rem 0.6rem;">
+                    Autofill
+                </button>
+            </div>
+
+            <form id="login-form">
+                <input type="hidden" id="login-role" value="STUDENT">
+
+                <div class="form-group">
+                    <label class="form-label" id="username-label" for="login-username">Register Number</label>
+                    <input type="text" id="login-username" class="form-control" placeholder="e.g. 2024CS101" required autofocus>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="login-password">Password</label>
+                    <input type="password" id="login-password" class="form-control" placeholder="Enter your password" required>
+                </div>
+
+                <button type="submit" id="btn-login-submit" class="btn btn-primary" style="width: 100%; padding: 0.8rem; font-size: 1rem; margin-top: 0.5rem;">
+                    Sign In to Portal →
+                </button>
+            </form>
+
+            <div style="text-align: center; margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid var(--border); font-size: 0.88rem; color: var(--text-secondary);">
+                Don't have a student account? <a href="/register" style="font-weight: 600;">Register Here</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script>
+        const demoCredentials = {
+            'STUDENT': { user: '2024CS101', pass: 'password123', label: 'Register Number', placeholder: 'e.g. 2024CS101' },
+            'ACCOUNTS': { user: 'accounts_admin', pass: 'password123', label: 'Accounts Staff ID / Username', placeholder: 'e.g. accounts_admin' },
+            'TRANSPORT': { user: 'transport_admin', pass: 'password123', label: 'Transport Staff ID / Username', placeholder: 'e.g. transport_admin' },
+            'LAB_ASSISTANT': { user: 'lab_admin', pass: 'password123', label: 'Lab Assistant Username', placeholder: 'e.g. lab_admin' },
+            'HOD': { user: 'hod_cs', pass: 'password123', label: 'HOD Username', placeholder: 'e.g. hod_cs' }
+        };
+
+        let selectedRole = 'STUDENT';
+
+        function selectRole(role, element) {
+            selectedRole = role;
+            document.getElementById('login-role').value = role;
+
+            document.querySelectorAll('.role-pill').forEach(pill => pill.classList.remove('active'));
+            if (element) element.classList.add('active');
+
+            const config = demoCredentials[role];
+            document.getElementById('username-label').textContent = config.label;
+            document.getElementById('login-username').placeholder = config.placeholder;
+            document.getElementById('demo-account-hint').innerHTML = `Demo: <strong>${config.user}</strong> / <strong>${config.pass}</strong>`;
+        }
+
+        function autofillDemoCredentials() {
+            const config = demoCredentials[selectedRole];
+            document.getElementById('login-username').value = config.user;
+            document.getElementById('login-password').value = config.pass;
+        }
+
+        // Parse query params on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const roleParam = urlParams.get('role');
+            const userParam = urlParams.get('user');
+
+            if (roleParam && demoCredentials[roleParam]) {
+                const pills = document.querySelectorAll('.role-pill');
+                const targetPill = Array.from(pills).find(p => p.textContent.toUpperCase().includes(roleParam.replace('_', ' ')));
+                selectRole(roleParam, targetPill);
+            }
+
+            if (userParam) {
+                document.getElementById('login-username').value = userParam;
+                document.getElementById('login-password').value = 'password123';
+            }
+
+            // Form Submit
+            document.getElementById('login-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = document.getElementById('btn-login-submit');
+                btn.disabled = true;
+                btn.textContent = 'Authenticating...';
+
+                try {
+                    const payload = {
+                        username: document.getElementById('login-username').value.trim(),
+                        password: document.getElementById('login-password').value.trim(),
+                        role: selectedRole
+                    };
+
+                    const res = await API.request('/api/auth/login', {
+                        method: 'POST',
+                        body: JSON.stringify(payload)
+                    });
+
+                    API.showToast(res.message, 'success');
+
+                    setTimeout(() => {
+                        if (selectedRole === 'STUDENT') {
+                            window.location.href = '/student-dashboard';
+                        } else {
+                            window.location.href = '/staff-dashboard';
+                        }
+                    }, 400);
+
+                } catch (err) {
+                    API.showToast(err.message, 'error');
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = 'Sign In to Portal →';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

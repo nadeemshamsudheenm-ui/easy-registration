@@ -1,0 +1,22 @@
+# Compiled binaries & build artifacts
+target/
+*.jar
+*.war
+*.class
+
+# Local MySQL server data & logs
+mysql-data/
+*.err
+*.pid
+
+# IDE specific files
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard — EASY REGISTRATION</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+    <!-- Header Navbar -->
+    <header class="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-brand">
+                <div class="brand-icon">🎓</div>
+                <div>
+                    EASY REGISTRATION
+                    <span class="nav-tagline">Student Self-Service Portal</span>
+                </div>
+            </a>
+            <div class="nav-links" id="nav-user-area">
+                <!-- Injected by API.renderNavbar() -->
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <!-- Page Title & Actions -->
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Student Registration Portal</h1>
+                <p class="page-subtitle">Track your multi-department clearances and submit semester registration</p>
+            </div>
+            <div>
+                <button onclick="openSubmissionModal()" class="btn btn-primary" id="btn-open-submit-modal">
+                    + Submit Semester Registration
+                </button>
+            </div>
+        </div>
+
+        <!-- Student Profile Card -->
+        <div class="card" style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-left: 5px solid var(--primary-light);">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <div style="display: flex; align-items: center; gap: 1.25rem;">
+                    <div style="width: 58px; height: 58px; border-radius: 50%; background: var(--primary-subtle); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 700;">
+                        👨‍🎓
+                    </div>
+                    <div>
+                        <h2 style="font-size: 1.4rem; color: var(--primary-dark);" id="student-name-display">Loading Student...</h2>
+                        <div style="font-size: 0.88rem; color: var(--text-secondary); margin-top: 0.2rem;">
+                            Register No: <strong id="student-reg-display" style="color: var(--primary);">—</strong> • 
+                            Roll No: <span id="student-roll-display">—</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+                    <div>
+                        <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Department</div>
+                        <div style="font-weight: 600; color: var(--text-primary);" id="student-dept-display">—</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Current Level</div>
+                        <div style="font-weight: 600; color: var(--text-primary);" id="student-sem-display">—</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Email & Phone</div>
+                        <div style="font-size: 0.85rem; color: var(--text-secondary);">
+                            <span id="student-email-display">—</span> | <span id="student-phone-display">—</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Registration Application Status & Stepper -->
+        <div class="card" id="active-application-card">
+            <div class="card-header">
+                <h3 class="card-title">📌 Current Semester Registration & Approval Tracker</h3>
+                <span class="badge badge-info" id="active-tracker-badge">Real-Time Sync</span>
+            </div>
+
+            <div id="active-application-view">
+                <div style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                    Loading active registration status...
+                </div>
+            </div>
+        </div>
+
+        <!-- Previous Applications History -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">🗂️ Registration Applications History</h3>
+            </div>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Application No</th>
+                            <th>Semester & Session</th>
+                            <th>Department</th>
+                            <th>Fee Paid</th>
+                            <th>Status</th>
+                            <th>Submitted Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-table-body">
+                        <tr>
+                            <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                                Loading application history...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal: Submit New Semester Registration -->
+    <div class="modal-overlay" id="submission-modal">
+        <div class="modal-dialog" style="max-width: 720px;">
+            <div class="modal-header">
+                <h3 class="modal-title">📝 New Semester Registration Request</h3>
+                <button type="button" class="modal-close" onclick="closeSubmissionModal()">&times;</button>
+            </div>
+            <form id="registration-submission-form">
+                <div class="modal-body">
+                    <p style="color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 1.5rem;">
+                        Fill in your academic and fee clearance details for the upcoming semester. Once submitted, your application will be routed through Accounts, Transport, Laboratory, and HOD for clearance.
+                    </p>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="app-academic-year">Academic Session *</label>
+                            <input type="text" id="app-academic-year" class="form-control" value="2025-2026" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="app-semester">Target Semester *</label>
+                            <select id="app-semester" class="form-select" required>
+                                <option value="1">Semester 1</option>
+                                <option value="2">Semester 2</option>
+                                <option value="3">Semester 3</option>
+                                <option value="4" selected>Semester 4</option>
+                                <option value="5">Semester 5</option>
+                                <option value="6">Semester 6</option>
+                                <option value="7">Semester 7</option>
+                                <option value="8">Semester 8</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="app-department">Department *</label>
+                            <select id="app-department" class="form-select" required>
+                                <option value="Computer Science & Engineering">Computer Science & Engineering</option>
+                                <option value="Information Technology">Information Technology</option>
+                                <option value="Electronics & Communication Engineering">Electronics & Communication Engineering</option>
+                                <option value="Electrical & Electronics Engineering">Electrical & Electronics Engineering</option>
+                                <option value="Mechanical Engineering">Mechanical Engineering</option>
+                                <option value="Civil Engineering">Civil Engineering</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="app-cgpa">Current Cumulative CGPA *</label>
+                            <input type="number" step="0.01" min="0" max="10" id="app-cgpa" class="form-control" placeholder="e.g. 8.65" value="8.50" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="app-backlogs">Active Backlogs Count *</label>
+                            <input type="number" min="0" id="app-backlogs" class="form-control" value="0" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="app-fee-receipt">Tuition Fee Receipt No *</label>
+                            <input type="text" id="app-fee-receipt" class="form-control" placeholder="e.g. RCPT-2026-99120" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="app-fee-amount">Tuition Fee Amount Paid (₹) *</label>
+                            <input type="number" step="100" id="app-fee-amount" class="form-control" placeholder="e.g. 45000" value="45000" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="app-fee-date">Fee Payment Date *</label>
+                            <input type="date" id="app-fee-date" class="form-control" required>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label class="form-label" for="app-courses">Registered Courses / Curriculum *</label>
+                            <textarea id="app-courses" class="form-textarea" rows="2" required></textarea>
+                            <small style="color: var(--text-muted); font-size: 0.78rem;">Comma-separated course codes and titles</small>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label class="form-check">
+                                <input type="checkbox" id="app-transport-opted" class="form-check-input">
+                                <span style="font-weight: 600; color: var(--primary);">
+                                    Opt for College Bus Transport Services (Requires Transport Dept Clearance)
+                                </span>
+                            </label>
+                        </div>
+
+                        <div id="transport-details-section" class="form-group full-width" style="display: none; background: var(--primary-subtle); padding: 1.25rem; border-radius: var(--radius-md); border: 1px dashed var(--primary-light);">
+                            <h4 style="font-size: 0.95rem; color: var(--primary); margin-bottom: 0.85rem;">🚌 College Transport Information</h4>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label" for="app-bus-route">Assigned Bus Route</label>
+                                    <input type="text" id="app-bus-route" class="form-control" placeholder="e.g. Route 12 - City Center to Campus">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="app-bus-stop">Boarding Point / Stop</label>
+                                    <input type="text" id="app-bus-stop" class="form-control" placeholder="e.g. North Gate Junction">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="app-transport-receipt">Bus Fee Receipt No</label>
+                                    <input type="text" id="app-transport-receipt" class="form-control" placeholder="e.g. TR-2026-8812">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="app-transport-amount">Bus Fee Paid (₹)</label>
+                                    <input type="number" id="app-transport-amount" class="form-control" placeholder="12000" value="12000">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeSubmissionModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="btn-submit-registration">Submit Registration Request</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/api.js"></script>
+    <script src="/js/student.js"></script>
+    <script>
+        // Set today's date in fee date picker by default
+        document.addEventListener('DOMContentLoaded', () => {
+            const today = new Date().toISOString().split('T')[0];
+            const dateInput = document.getElementById('app-fee-date');
+            if (dateInput) dateInput.value = today;
+        });
+    </script>
+</body>
+</html>

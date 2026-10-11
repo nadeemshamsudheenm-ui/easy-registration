@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration — EASY REGISTRATION</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .register-wrapper {
+            min-height: calc(100vh - 80px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2.5rem 1.5rem;
+        }
+        .register-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-xl);
+            width: 100%;
+            max-width: 720px;
+            padding: 2.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-brand">
+                <div class="brand-icon">🎓</div>
+                <div>
+                    EASY REGISTRATION
+                    <span class="nav-tagline">Online Semester Registration System</span>
+                </div>
+            </a>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/login" class="btn btn-primary btn-sm">Sign In</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="register-wrapper">
+        <div class="register-card">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <div style="width: 50px; height: 50px; background: var(--primary-subtle); color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem; font-size: 1.5rem;">
+                    📝
+                </div>
+                <h2 style="color: var(--primary-dark); font-size: 1.7rem;">Student Enrollment Sign Up</h2>
+                <p style="color: var(--text-secondary); font-size: 0.88rem; margin-top: 0.35rem;">
+                    Create your student portal account to submit semester registrations and clearances
+                </p>
+            </div>
+
+            <form id="register-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="reg-username">Register Number *</label>
+                        <input type="text" id="reg-username" class="form-control" placeholder="e.g. 2024CS105" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="reg-fullname">Full Name *</label>
+                        <input type="text" id="reg-fullname" class="form-control" placeholder="e.g. Rohan Varma" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="reg-email">Email Address *</label>
+                        <input type="email" id="reg-email" class="form-control" placeholder="student@college.edu" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="reg-phone">Phone Number *</label>
+                        <input type="tel" id="reg-phone" class="form-control" placeholder="+91 9876543210" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="reg-dept">Academic Department *</label>
+                        <select id="reg-dept" class="form-select" required>
+                            <option value="">-- Select Department --</option>
+                            <option value="Computer Science & Engineering">Computer Science & Engineering</option>
+                            <option value="Information Technology">Information Technology</option>
+                            <option value="Electronics & Communication Engineering">Electronics & Communication Engineering</option>
+                            <option value="Electrical & Electronics Engineering">Electrical & Electronics Engineering</option>
+                            <option value="Mechanical Engineering">Mechanical Engineering</option>
+                            <option value="Civil Engineering">Civil Engineering</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="reg-semester">Current Semester *</label>
+                        <select id="reg-semester" class="form-select" required>
+                            <option value="1">Semester 1</option>
+                            <option value="2">Semester 2</option>
+                            <option value="3">Semester 3</option>
+                            <option value="4" selected>Semester 4</option>
+                            <option value="5">Semester 5</option>
+                            <option value="6">Semester 6</option>
+                            <option value="7">Semester 7</option>
+                            <option value="8">Semester 8</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="reg-batch">Batch Year</label>
+                        <input type="text" id="reg-batch" class="form-control" value="2024-2028">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="reg-roll">Class Roll Number</label>
+                        <input type="text" id="reg-roll" class="form-control" placeholder="e.g. CS-415">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="reg-password">Create Password *</label>
+                        <input type="password" id="reg-password" class="form-control" placeholder="At least 6 characters" minlength="6" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="reg-confirm-password">Confirm Password *</label>
+                        <input type="password" id="reg-confirm-password" class="form-control" placeholder="Re-enter password" required>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label class="form-check">
+                            <input type="checkbox" id="reg-transport" class="form-check-input">
+                            <span style="font-size: 0.92rem; font-weight: 500;">
+                                I require College Bus Transport facility for the upcoming semester
+                            </span>
+                        </label>
+                    </div>
+
+                    <div class="form-group full-width" id="reg-bus-route-group" style="display: none;">
+                        <label class="form-label" for="reg-bus-route">Preferred Bus Route / Stop</label>
+                        <input type="text" id="reg-bus-route" class="form-control" placeholder="e.g. Route 12 - City Center to Campus">
+                    </div>
+                </div>
+
+                <button type="submit" id="btn-register-submit" class="btn btn-primary" style="width: 100%; padding: 0.85rem; font-size: 1rem; margin-top: 1rem;">
+                    Complete Registration →
+                </button>
+            </form>
+
+            <div style="text-align: center; margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid var(--border); font-size: 0.88rem; color: var(--text-secondary);">
+                Already have an account? <a href="/login" style="font-weight: 600;">Sign In Here</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script>
+        document.getElementById('reg-transport').addEventListener('change', (e) => {
+            document.getElementById('reg-bus-route-group').style.display = e.target.checked ? 'block' : 'none';
+        });
+
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const pass = document.getElementById('reg-password').value;
+            const confirmPass = document.getElementById('reg-confirm-password').value;
+
+            if (pass !== confirmPass) {
+                API.showToast('Passwords do not match.', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('btn-register-submit');
+            btn.disabled = true;
+            btn.textContent = 'Creating Account...';
+
+            try {
+                const payload = {
+                    username: document.getElementById('reg-username').value.trim(),
+                    fullName: document.getElementById('reg-fullname').value.trim(),
+                    email: document.getElementById('reg-email').value.trim(),
+                    phone: document.getElementById('reg-phone').value.trim(),
+                    department: document.getElementById('reg-dept').value,
+                    currentSemester: parseInt(document.getElementById('reg-semester').value),
+                    batchYear: document.getElementById('reg-batch').value.trim(),
+                    rollNumber: document.getElementById('reg-roll').value.trim(),
+                    password: pass.trim(),
+                    transportOpted: document.getElementById('reg-transport').checked,
+                    busRoute: document.getElementById('reg-bus-route').value.trim()
+                };
+
+                const res = await API.request('/api/auth/register', {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+
+                API.showToast(res.message, 'success');
+                setTimeout(() => {
+                    window.location.href = `/login?role=STUDENT&user=${encodeURIComponent(payload.username)}`;
+                }, 1000);
+            } catch (err) {
+                API.showToast(err.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Complete Registration →';
+            }
+        });
+    </script>
+</body>
+</html>
