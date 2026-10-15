@@ -23,6 +23,8 @@ public interface RegistrationApplicationRepository extends JpaRepository<Registr
 
     boolean existsByStudentAndAcademicYearAndTargetSemester(User student, String academicYear, Integer targetSemester);
 
+    boolean existsByStudentAndAcademicYearAndTargetSemesterAndStatusNot(User student, String academicYear, Integer targetSemester, RegistrationStatus status);
+
     long countByStatus(RegistrationStatus status);
 
     @Query("SELECT COUNT(a) FROM RegistrationApplication a WHERE a.status = 'APPROVED'")

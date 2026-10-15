@@ -114,6 +114,11 @@ function renderApplications() {
                             🖨️ Print Slip
                         </a>
                     ` : ''}
+                    ${app.status === 'REJECTED' ? `
+                        <button onclick="openResubmitModal(${app.id})" class="btn btn-warning btn-sm" style="margin-left: 0.35rem;" title="Resubmit rejected application">
+                            🔄 Resubmit
+                        </button>
+                    ` : ''}
                 </td>
             </tr>
         `;
@@ -179,6 +184,10 @@ function renderActiveApplication(app) {
                     <a href="/print-slip?appNum=${encodeURIComponent(app.applicationNumber)}" target="_blank" class="btn btn-success" style="box-shadow: 0 4px 15px rgba(5,150,105,0.3);">
                         🖨️ Download & Print Clearance Slip
                     </a>
+                ` : isRejected ? `
+                    <button onclick="openResubmitModal(${app.id})" class="btn btn-warning" id="btn-header-resubmit" style="display: inline-flex; align-items: center; gap: 0.4rem; font-weight: 600;">
+                        🔄 Resubmit Application
+                    </button>
                 ` : `
                     <button onclick="openSubmissionModal()" class="btn btn-secondary btn-sm" title="Submit another application if needed">
                         + New Form
@@ -220,17 +229,24 @@ function renderActiveApplication(app) {
 
         ${isRejected ? `
             <div style="background: var(--danger-light); border: 1.5px solid var(--danger); border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1.5rem;">
-                <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
-                    <div style="font-size: 1.5rem; color: var(--danger); line-height: 1;">⚠️</div>
-                    <div>
-                        <h4 style="color: var(--danger); margin-bottom: 0.25rem;">Application Returned / Rejected</h4>
-                        <p style="color: #7f1d1d; font-size: 0.92rem; margin-bottom: 0.5rem;">
-                            <strong>Stage:</strong> ${app.rejectionStage || 'Verification'} Department<br>
-                            <strong>Remarks:</strong> ${API.escapeHtml(app.rejectionReason || 'No specific remarks recorded.')}
-                        </p>
-                        <p style="font-size: 0.85rem; color: #991b1b;">
-                            Please resolve the dues/corrections with the respective department and re-submit a fresh registration application.
-                        </p>
+                <div style="display: flex; gap: 0.75rem; align-items: flex-start; justify-content: space-between; flex-wrap: wrap;">
+                    <div style="display: flex; gap: 0.75rem; align-items: flex-start; max-width: 650px;">
+                        <div style="font-size: 1.5rem; color: var(--danger); line-height: 1;">⚠️</div>
+                        <div>
+                            <h4 style="color: var(--danger); margin-bottom: 0.25rem;">Application Returned / Rejected</h4>
+                            <p style="color: #7f1d1d; font-size: 0.92rem; margin-bottom: 0.5rem;">
+                                <strong>Stage:</strong> ${app.rejectionStage || 'Verification'} Department<br>
+                                <strong>Remarks:</strong> ${API.escapeHtml(app.rejectionReason || 'No specific remarks recorded.')}
+                            </p>
+                            <p style="font-size: 0.85rem; color: #991b1b; margin-bottom: 0;">
+                                Please review the remarks above, make any required updates to your fee receipts or information, and click <strong>Resubmit Application</strong> to send it back for departmental clearance.
+                            </p>
+                        </div>
+                    </div>
+                    <div style="align-self: center; margin-top: 0.5rem;">
+                        <button onclick="openResubmitModal(${app.id})" class="btn btn-primary" id="btn-resubmit-banner" style="display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.65rem 1.25rem; font-weight: 600; box-shadow: 0 4px 12px rgba(37,99,235,0.25);">
+                            🔄 Resubmit Application
+                        </button>
                     </div>
                 </div>
             </div>
@@ -346,9 +362,13 @@ function updateCourseSuggestions(semester) {
 }
 
 async function handleFormSubmission() {
+    const resubmitIdInput = document.getElementById('app-resubmit-id');
+    const resubmitId = resubmitIdInput ? resubmitIdInput.value.trim() : '';
+    const isResubmit = !!resubmitId;
+
     const submitBtn = document.getElementById('btn-submit-registration');
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Submitting Application...';
+    submitBtn.textContent = isResubmit ? 'Resubmitting Application...' : 'Submitting Application...';
 
     try {
         const payload = {
@@ -368,7 +388,8 @@ async function handleFormSubmission() {
             selectedSubjects: document.getElementById('app-courses').value.trim()
         };
 
-        const res = await API.request('/api/registration/submit', {
+        const url = isResubmit ? `/api/registration/resubmit/${resubmitId}` : '/api/registration/submit';
+        const res = await API.request(url, {
             method: 'POST',
             body: JSON.stringify(payload)
         });
@@ -380,11 +401,96 @@ async function handleFormSubmission() {
         API.showToast(err.message, 'error');
     } finally {
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Submit Registration Request';
+        submitBtn.textContent = isResubmit ? '🔄 Resubmit Application for Approval' : 'Submit Registration Request';
     }
 }
 
 function openSubmissionModal() {
+    // Reset resubmit mode
+    const resubmitIdInput = document.getElementById('app-resubmit-id');
+    if (resubmitIdInput) resubmitIdInput.value = '';
+
+    const titleEl = document.getElementById('submission-modal-title');
+    if (titleEl) titleEl.textContent = '📝 New Semester Registration Request';
+
+    const descEl = document.getElementById('submission-modal-desc');
+    if (descEl) descEl.textContent = 'Fill in your academic and fee clearance details for the upcoming semester. Once submitted, your application will be routed through Accounts, Transport, Laboratory, and HOD for clearance.';
+
+    const submitBtn = document.getElementById('btn-submit-registration');
+    if (submitBtn) submitBtn.textContent = 'Submit Registration Request';
+
+    const alertBox = document.getElementById('modal-resubmit-alert');
+    if (alertBox) alertBox.style.display = 'none';
+
+    // Reset defaults from current student
+    if (currentStudent) {
+        renderStudentProfile();
+    }
+    document.getElementById('submission-modal').classList.add('active');
+}
+
+async function openResubmitModal(appId) {
+    let app = studentApplications.find(a => a.id === appId);
+    if (!app) {
+        try {
+            const res = await API.request('/api/registration/' + appId);
+            app = res.data;
+        } catch (err) {
+            API.showToast('Failed to load application details', 'error');
+            return;
+        }
+    }
+
+    // Set hidden resubmit ID
+    const resubmitIdInput = document.getElementById('app-resubmit-id');
+    if (resubmitIdInput) resubmitIdInput.value = app.id;
+
+    // Update modal title & text
+    const titleEl = document.getElementById('submission-modal-title');
+    if (titleEl) titleEl.textContent = `🔄 Resubmit Application (${app.applicationNumber})`;
+
+    const descEl = document.getElementById('submission-modal-desc');
+    if (descEl) descEl.textContent = 'Review and update your details, correct any disputed fee receipts or information, and resubmit for department approvals.';
+
+    const submitBtn = document.getElementById('btn-submit-registration');
+    if (submitBtn) submitBtn.textContent = '🔄 Resubmit Application for Approval';
+
+    // Show rejection warning banner inside modal
+    const alertBox = document.getElementById('modal-resubmit-alert');
+    const badgeAppNum = document.getElementById('resubmit-badge-appnum');
+    const reasonText = document.getElementById('resubmit-alert-reason');
+    if (alertBox) {
+        alertBox.style.display = 'block';
+        if (badgeAppNum) badgeAppNum.textContent = app.applicationNumber;
+        if (reasonText) {
+            reasonText.innerHTML = `<strong>Rejected at:</strong> ${API.escapeHtml(app.rejectionStage || 'Verification')} Department<br><strong>Remarks:</strong> ${API.escapeHtml(app.rejectionReason || 'No specific remarks given.')}`;
+        }
+    }
+
+    // Prepopulate form fields with existing data
+    if (document.getElementById('app-academic-year')) document.getElementById('app-academic-year').value = app.academicYear || '2025-2026';
+    if (document.getElementById('app-semester')) document.getElementById('app-semester').value = app.targetSemester || 4;
+    if (document.getElementById('app-department')) document.getElementById('app-department').value = app.department || (currentStudent ? currentStudent.department : '');
+    if (document.getElementById('app-cgpa')) document.getElementById('app-cgpa').value = app.cgpa != null ? app.cgpa : '';
+    if (document.getElementById('app-backlogs')) document.getElementById('app-backlogs').value = app.backlogsCount !== undefined ? app.backlogsCount : 0;
+    if (document.getElementById('app-fee-receipt')) document.getElementById('app-fee-receipt').value = app.feeReceiptNumber || '';
+    if (document.getElementById('app-fee-amount')) document.getElementById('app-fee-amount').value = app.feeAmountPaid != null ? app.feeAmountPaid : '';
+    if (document.getElementById('app-fee-date')) document.getElementById('app-fee-date').value = app.feePaymentDate || new Date().toISOString().split('T')[0];
+    if (document.getElementById('app-courses')) document.getElementById('app-courses').value = app.selectedSubjects || '';
+
+    // Transport details
+    const transportCheckbox = document.getElementById('app-transport-opted');
+    const transportDetails = document.getElementById('transport-details-section');
+    if (transportCheckbox) {
+        transportCheckbox.checked = !!app.transportOpted;
+        if (transportDetails) transportDetails.style.display = transportCheckbox.checked ? 'block' : 'none';
+    }
+    if (document.getElementById('app-bus-route')) document.getElementById('app-bus-route').value = app.busRoute || '';
+    if (document.getElementById('app-bus-stop')) document.getElementById('app-bus-stop').value = app.busStop || '';
+    if (document.getElementById('app-transport-receipt')) document.getElementById('app-transport-receipt').value = app.transportFeeReceipt || '';
+    if (document.getElementById('app-transport-amount')) document.getElementById('app-transport-amount').value = app.transportFeeAmount || 0;
+
+    // Open modal
     document.getElementById('submission-modal').classList.add('active');
 }
 
@@ -401,3 +507,4 @@ async function viewApplicationDetails(id) {
         API.showToast(err.message, 'error');
     }
 }
+

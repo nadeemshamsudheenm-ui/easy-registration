@@ -253,6 +253,19 @@ a:hover {
     transform: translateY(-1px);
 }
 
+.btn-warning {
+    background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(217, 119, 6, 0.25);
+}
+
+.btn-warning:hover {
+    background: #b45309;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(217, 119, 6, 0.35);
+    color: white;
+}
+
 .btn-outline {
     background: transparent;
     border-color: var(--primary-light);

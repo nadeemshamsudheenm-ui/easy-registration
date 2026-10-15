@@ -121,12 +121,28 @@
     <div class="modal-overlay" id="submission-modal">
         <div class="modal-dialog" style="max-width: 720px;">
             <div class="modal-header">
-                <h3 class="modal-title">📝 New Semester Registration Request</h3>
+                <h3 class="modal-title" id="submission-modal-title">📝 New Semester Registration Request</h3>
                 <button type="button" class="modal-close" onclick="closeSubmissionModal()">&times;</button>
             </div>
             <form id="registration-submission-form">
+                <input type="hidden" id="app-resubmit-id" value="">
                 <div class="modal-body">
-                    <p style="color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 1.5rem;">
+                    <div id="modal-resubmit-alert" style="display: none; background: #fff1f2; border: 1.5px solid #f43f5e; border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.25rem;">
+                        <div style="display: flex; gap: 0.6rem; align-items: flex-start;">
+                            <span style="font-size: 1.25rem; line-height: 1;">🔄</span>
+                            <div>
+                                <div style="font-weight: 700; color: #9f1239; font-size: 0.95rem; margin-bottom: 0.2rem;">
+                                    Resubmitting Application: <span id="resubmit-badge-appnum"></span>
+                                </div>
+                                <div style="color: #881337; font-size: 0.85rem;" id="resubmit-alert-reason"></div>
+                                <div style="color: #9f1239; font-size: 0.78rem; margin-top: 0.35rem; font-style: italic;">
+                                    Modify any incorrect details below and click Resubmit to send your application back for clearance.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p id="submission-modal-desc" style="color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 1.5rem;">
                         Fill in your academic and fee clearance details for the upcoming semester. Once submitted, your application will be routed through Accounts, Transport, Laboratory, and HOD for clearance.
                     </p>
 

@@ -40,6 +40,36 @@ public class RegistrationController {
     }
 
     /**
+     * Resubmit a rejected semester registration application with updated details.
+     */
+    @PostMapping("/resubmit/{id}")
+    public ResponseEntity<ApiResponse<RegistrationApplication>> resubmitApplication(
+            @PathVariable Long id,
+            @Valid @RequestBody ApplicationRequestDto requestDto,
+            HttpSession session) {
+        User student = authService.requireRole(session, Role.STUDENT);
+        RegistrationApplication app = registrationService.resubmitApplication(student, id, requestDto);
+        return ResponseEntity.ok(ApiResponse.ok("Registration application resubmitted successfully! Reference: " 
+                + app.getApplicationNumber(), app));
+    }
+
+    @PutMapping("/resubmit/{id}")
+    public ResponseEntity<ApiResponse<RegistrationApplication>> resubmitApplicationPut(
+            @PathVariable Long id,
+            @Valid @RequestBody ApplicationRequestDto requestDto,
+            HttpSession session) {
+        return resubmitApplication(id, requestDto, session);
+    }
+
+    @PostMapping("/{id}/resubmit")
+    public ResponseEntity<ApiResponse<RegistrationApplication>> resubmitApplicationAlt(
+            @PathVariable Long id,
+            @Valid @RequestBody ApplicationRequestDto requestDto,
+            HttpSession session) {
+        return resubmitApplication(id, requestDto, session);
+    }
+
+    /**
      * List all applications submitted by the logged-in student.
      */
     @GetMapping("/my-applications")
